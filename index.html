@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meniu Restaurant</title>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
@@ -41,8 +42,8 @@
                                     <ul className="text-sm text-gray-600">
                                         <li>Calorii: {item.nutritionalInfo.calories}</li>
                                         <li>Grăsimi: {item.nutritionalInfo.fats}</li>
-                                        <li>Proteine: {item.nutritionalInfo.protein}g</li>
-                                        <li>Carbohidrați: {item.nutritionalInfo.carbs || '0'}g</li>
+                                        <li>Proteine: {item.nutritionalInfo.protein}</li>
+                                        <li>Carbohidrați: {item.nutritionalInfo.carbs}</li>
                                         <li>Sare: {item.nutritionalInfo.salt}</li>
                                     </ul>
                                 </div>
@@ -70,39 +71,24 @@
         const MenuList = () => {
             const [menuData, setMenuData] = React.useState([]);
             const [loading, setLoading] = React.useState(true);
-            const [error, setError] = React.useState(null);
 
             React.useEffect(() => {
-                const fetchMenuData = async () => {
-                    try {
-                        const response = await fetch('data/menu.json');
-                        if (!response.ok) {
-                            throw new Error('Nu s-au putut încărca datele meniului');
-                        }
-                        const data = await response.json();
-                        setMenuData(data.menuItems);
+                fetch('/menu-items.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        setMenuData(data);
                         setLoading(false);
-                    } catch (err) {
-                        setError(err.message);
+                    })
+                    .catch(error => {
+                        console.error('Error loading menu:', error);
                         setLoading(false);
-                    }
-                };
-
-                fetchMenuData();
+                    });
             }, []);
 
             if (loading) {
                 return (
                     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
                         <div className="text-xl text-gray-600">Se încarcă meniul...</div>
-                    </div>
-                );
-            }
-
-            if (error) {
-                return (
-                    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-                        <div className="text-xl text-red-600">Eroare: {error}</div>
                     </div>
                 );
             }
@@ -126,6 +112,17 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<MenuList />);
+
+        // Check if user is logged in
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>
