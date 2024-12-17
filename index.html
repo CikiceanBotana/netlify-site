@@ -54,6 +54,33 @@
             opacity: 1;
             transform: translateY(0);
         }
+        .nutritional-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: white;
+        }
+        .nutritional-table td {
+            padding: 8px 12px;
+            border: 1px solid rgba(197, 165, 114, 0.3);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .nutritional-table tr td:first-child {
+            background: rgba(197, 165, 114, 0.05);
+            font-weight: 500;
+            color: #666;
+            width: 25%;
+            text-align: left;
+        }
+        .portion-info {
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
     </style>
 </head>
 <body class="bg-skin font-lato">
@@ -65,7 +92,6 @@
 
             React.useEffect(() => {
                 if (isExpanded) {
-                    // Delay showing content until dropdown animation starts
                     setTimeout(() => setIsContentVisible(true), 50);
                 } else {
                     setIsContentVisible(false);
@@ -103,61 +129,47 @@
                 }, React.createElement('div', {
                     className: `details-content ${isContentVisible ? 'visible' : ''} p-6`
                 }, [
-                    React.createElement('div', {
-                        key: 'grid',
-                        className: "grid grid-cols-1 md:grid-cols-2 gap-6"
+                    React.createElement('p', {
+                        className: 'portion-info',
+                        key: 'portion-details'
+                    }, item.ingredients),
+                    React.createElement('table', {
+                        className: 'nutritional-table',
+                        key: 'nutritional-table'
                     }, [
-                        React.createElement('div', { key: 'ingredients' }, [
-                            React.createElement('h4', { 
-                                className: "font-playfair font-bold text-gray-800 mb-3" 
-                            }, "Ingrediente"),
-                            React.createElement('p', { 
-                                className: "text-gray-600 leading-relaxed" 
-                            }, item.ingredients)
-                        ]),
-                        React.createElement('div', { key: 'nutrition' }, [
-                            React.createElement('h4', { 
-                                className: "font-playfair font-bold text-gray-800 mb-3" 
-                            }, "Informații Nutriționale"),
-                            React.createElement('ul', { 
-                                className: "text-gray-600 space-y-2" 
-                            }, [
-                                React.createElement('li', { key: 'calories' }, `Calorii: ${item.nutritionalInfo?.calories}`),
-                                React.createElement('li', { key: 'fats' }, `Grăsimi: ${item.nutritionalInfo?.fats}`),
-                                React.createElement('li', { key: 'protein' }, `Proteine: ${item.nutritionalInfo?.protein}`),
-                                React.createElement('li', { key: 'carbs' }, `Carbohidrați: ${item.nutritionalInfo?.carbs}`),
-                                React.createElement('li', { key: 'salt' }, `Sare: ${item.nutritionalInfo?.salt}`)
+                        React.createElement('tbody', {}, [
+                            React.createElement('tr', { key: 'row-1' }, [
+                                React.createElement('td', {}, 'Valoare energetică Kcal/kj'),
+                                React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.calories || '-')
+                            ]),
+                            React.createElement('tr', { key: 'row-2' }, [
+                                React.createElement('td', {}, 'Grăsimi/din care lipide saturate'),
+                                React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.fats || '-')
+                            ]),
+                            React.createElement('tr', { key: 'row-3' }, [
+                                React.createElement('td', {}, 'Proteine'),
+                                React.createElement('td', {}, item.nutritionalInfo?.protein || '-'),
+                                React.createElement('td', {}, 'Glucide'),
+                                React.createElement('td', {}, item.nutritionalInfo?.carbs || '-')
+                            ]),
+                            React.createElement('tr', { key: 'row-4' }, [
+                                React.createElement('td', {}, 'Sare'),
+                                React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.salt || '-')
+                            ]),
+                            React.createElement('tr', { key: 'row-5' }, [
+                                React.createElement('td', {}, 'Alergeni'),
+                                React.createElement('td', { colSpan: '3', className: 'text-red-600' }, item.allergens || '-')
+                            ]),
+                            React.createElement('tr', { key: 'row-6' }, [
+                                React.createElement('td', {}, 'Aditivi'),
+                                React.createElement('td', { colSpan: '3', className: 'text-orange-600' }, item.additives || '-')
                             ])
-                        ])
-                    ]),
-                    (item.allergens || item.additives) && React.createElement('div', {
-                        key: 'warnings',
-                        className: "mt-6 border-t border-gold pt-4"
-                    }, [
-                        item.allergens && React.createElement('p', { 
-                            key: 'allergens',
-                            className: "text-red-600 mb-2" 
-                        }, [
-                            React.createElement('span', { 
-                                className: "font-bold" 
-                            }, "Alergeni: "),
-                            item.allergens
-                        ]),
-                        item.additives && React.createElement('p', { 
-                            key: 'additives',
-                            className: "text-orange-600" 
-                        }, [
-                            React.createElement('span', { 
-                                className: "font-bold" 
-                            }, "Aditivi: "),
-                            item.additives
                         ])
                     ])
                 ]))
             ]);
         };
 
-        // Rest of the code remains the same (Logo and MenuList components)
         const Logo = () => {
             return React.createElement('div', {
                 className: "text-center mb-8"
