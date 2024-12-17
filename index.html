@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Menu</title>
+    <title>Meniu Restaurant</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
@@ -19,13 +19,13 @@
                     <div className="flex justify-between items-center">
                         <div>
                             <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
-                            <p className="text-sm text-gray-600">Portion: {item.portion}</p>
+                            <p className="text-sm text-gray-600">Porție: {item.portion}</p>
                         </div>
                         <button
                             onClick={() => setIsExpanded(!isExpanded)}
                             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
                         >
-                            {isExpanded ? 'Less Details' : 'More Details'}
+                            {isExpanded ? 'Mai puține detalii' : 'Mai multe detalii'}
                         </button>
                     </div>
                     
@@ -33,17 +33,17 @@
                         <div className="mt-4 p-4 bg-gray-50 rounded-md">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <h4 className="font-semibold text-gray-700 mb-2">Ingredients</h4>
+                                    <h4 className="font-semibold text-gray-700 mb-2">Ingrediente</h4>
                                     <p className="text-sm text-gray-600">{item.ingredients}</p>
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-gray-700 mb-2">Nutritional Information</h4>
+                                    <h4 className="font-semibold text-gray-700 mb-2">Informații Nutriționale</h4>
                                     <ul className="text-sm text-gray-600">
-                                        <li>Calories: {item.nutritionalInfo.calories}</li>
-                                        <li>Fats: {item.nutritionalInfo.fats}</li>
-                                        <li>Protein: {item.nutritionalInfo.protein}g</li>
-                                        <li>Carbs: {item.nutritionalInfo.carbs || '0'}g</li>
-                                        <li>Salt: {item.nutritionalInfo.salt}</li>
+                                        <li>Calorii: {item.nutritionalInfo.calories}</li>
+                                        <li>Grăsimi: {item.nutritionalInfo.fats}</li>
+                                        <li>Proteine: {item.nutritionalInfo.protein}g</li>
+                                        <li>Carbohidrați: {item.nutritionalInfo.carbs || '0'}g</li>
+                                        <li>Sare: {item.nutritionalInfo.salt}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -51,12 +51,12 @@
                                 <div className="mt-4">
                                     {item.allergens && (
                                         <p className="text-sm text-red-600">
-                                            <span className="font-semibold">Allergens:</span> {item.allergens}
+                                            <span className="font-semibold">Alergeni:</span> {item.allergens}
                                         </p>
                                     )}
                                     {item.additives && (
                                         <p className="text-sm text-orange-600">
-                                            <span className="font-semibold">Additives:</span> {item.additives}
+                                            <span className="font-semibold">Aditivi:</span> {item.additives}
                                         </p>
                                     )}
                                 </div>
@@ -77,7 +77,7 @@
                     try {
                         const response = await fetch('data/menu.json');
                         if (!response.ok) {
-                            throw new Error('Failed to fetch menu data');
+                            throw new Error('Nu s-au putut încărca datele meniului');
                         }
                         const data = await response.json();
                         setMenuData(data.menuItems);
@@ -94,7 +94,7 @@
             if (loading) {
                 return (
                     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-                        <div className="text-xl text-gray-600">Loading menu...</div>
+                        <div className="text-xl text-gray-600">Se încarcă meniul...</div>
                     </div>
                 );
             }
@@ -102,7 +102,7 @@
             if (error) {
                 return (
                     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-                        <div className="text-xl text-red-600">Error: {error}</div>
+                        <div className="text-xl text-red-600">Eroare: {error}</div>
                     </div>
                 );
             }
@@ -111,8 +111,8 @@
                 <div className="min-h-screen bg-gray-100">
                     <div className="container mx-auto px-4 py-8">
                         <header className="text-center mb-12">
-                            <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Menu</h1>
-                            <p className="text-gray-600">Click on "More Details" to see nutritional information and ingredients</p>
+                            <h1 className="text-4xl font-bold text-gray-900 mb-4">Meniul Nostru</h1>
+                            <p className="text-gray-600">Apăsați pe "Mai multe detalii" pentru a vedea informațiile nutriționale și ingredientele</p>
                         </header>
                         <div className="max-w-3xl mx-auto">
                             {menuData.map((item, index) => (
