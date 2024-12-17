@@ -148,19 +148,21 @@
                             ]),
                             React.createElement('tr', { key: 'row-3' }, [
                                 React.createElement('td', {}, 'Proteine'),
-                                React.createElement('td', {}, item.nutritionalInfo?.protein || '-'),
-                                React.createElement('td', {}, 'Glucide'),
-                                React.createElement('td', {}, item.nutritionalInfo?.carbs || '-')
+                                React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.protein || '-')
                             ]),
                             React.createElement('tr', { key: 'row-4' }, [
+                                React.createElement('td', {}, 'Glucide'),
+                                React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.carbs || '-')
+                            ]),
+                            React.createElement('tr', { key: 'row-5' }, [
                                 React.createElement('td', {}, 'Sare'),
                                 React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.salt || '-')
                             ]),
-                            React.createElement('tr', { key: 'row-5' }, [
+                            React.createElement('tr', { key: 'row-6' }, [
                                 React.createElement('td', {}, 'Alergeni'),
                                 React.createElement('td', { colSpan: '3', className: 'text-red-600' }, item.allergens || '-')
                             ]),
-                            React.createElement('tr', { key: 'row-6' }, [
+                            React.createElement('tr', { key: 'row-7' }, [
                                 React.createElement('td', {}, 'Aditivi'),
                                 React.createElement('td', { colSpan: '3', className: 'text-orange-600' }, item.additives || '-')
                             ])
