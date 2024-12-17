@@ -116,8 +116,39 @@
     <script>
         async function loadMenu() {
             try {
-                const response = await fetch('/data/menu.json');
-                const data = await response.json();
+                // Hard-coded menu data
+                const data = {
+                  "menuItems": [
+                    {
+                      "name": "SALATĂ ICRE CRAP",
+                      "portion": "100G",
+                      "ingredients": "icre crap - 25g, ulei - 60g, zeamă de lămâie, ceapă, apă, sare",
+                      "nutritionalInfo": {
+                        "calories": "565/2361",
+                        "grăsimi": "61g/30g",
+                        "proteine": "6g",
+                        "carbohidrați": "0g",
+                        "sare": "1g"
+                      },
+                      "allergens": "pește",
+                      "additives": null
+                    },
+                    {
+                      "name": "SALATĂ ICRE CRAP",
+                      "portion": "100G",
+                      "ingredients": "icre crap - 25g, ulei - 60g, zeamă de lămâie, ceapă, apă, sare",
+                      "nutritionalInfo": {
+                        "calories": "565/2361",
+                        "grăsimi": "61g/30g",
+                        "proteine": "6g",
+                        "carbohidrați": "0g",
+                        "sare": "1g"
+                      },
+                      "allergens": "pește",
+                      "additives": null
+                    }
+                  ]
+                };
                 displayMenu(data.menuItems);
             } catch (error) {
                 console.error('Error loading menu:', error);
