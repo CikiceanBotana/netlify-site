@@ -43,8 +43,15 @@
             transition: max-height 0.5s ease-in-out;
         }
         .menu-details.expanded {
-            max-height: 500px;
+            max-height: 800px;
         }
+
+        .nutritional-table + .nutritional-table {
+            margin-top: 2rem;
+            border-top: 2px solid rgba(197, 165, 114, 0.2);
+            padding-top: 1rem;
+        } 
+
         .details-content {
             opacity: 0;
             transform: translateY(-10px);
@@ -86,6 +93,102 @@
 <body class="bg-skin font-lato">
     <div id="root"></div>
     <script>
+        // Calculation functions
+        const extractNumber = (str) => {
+            if (!str) return 0;
+            const match = str.match(/\d+/);
+            return match ? parseInt(match[0]) : 0;
+        };
+
+        const calculatePer100g = (value, portionSize) => {
+            if (!value || !portionSize) return '-';
+            
+            // Handle energy values (e.g., "254/1062")
+            if (value.includes('/')) {
+                const [kcal, kj] = value.split('/').map(v => extractNumber(v));
+                const kcalPer100 = Math.round((kcal * 100) / portionSize);
+                const kjPer100 = Math.round((kj * 100) / portionSize);
+                return `${kcalPer100}/${kjPer100}`;
+            }
+            
+            // Handle values with slashes (e.g., "14/6")
+            if (value.includes('/')) {
+                const [val1, val2] = value.split('/').map(v => extractNumber(v));
+                const val1Per100 = Math.round((val1 * 100) / portionSize);
+                const val2Per100 = Math.round((val2 * 100) / portionSize);
+                return `${val1Per100}/${val2Per100}`;
+            }
+
+            // Handle simple numeric values
+            const numValue = extractNumber(value);
+            if (numValue === 0) return '-';
+            
+            const per100 = Math.round((numValue * 100) / portionSize);
+            return `${per100}${value.includes('gr') ? 'gr' : ''}`;
+        };
+
+        const processNutritionalInfo = (item) => {
+            if (!item || !item.portion) return null;
+            
+            const portionSize = extractNumber(item.portion);
+            if (!portionSize) return null;
+
+            return {
+                calories: calculatePer100g(item.nutritionalInfo?.calories, portionSize),
+                fats: calculatePer100g(item.nutritionalInfo?.fats, portionSize),
+                protein: calculatePer100g(item.nutritionalInfo?.protein, portionSize),
+                carbs: calculatePer100g(item.nutritionalInfo?.carbs, portionSize),
+                salt: calculatePer100g(item.nutritionalInfo?.salt, portionSize)
+            };
+        };
+
+        // Table component
+        const NutritionalTable = ({ item, per100g = false }) => {
+            const values = per100g ? processNutritionalInfo(item) : item.nutritionalInfo;
+            const title = per100g ? 'Valori nutriționale per 100g' : `Valori nutriționale per porție (${item.portion})`;
+
+            return React.createElement('div', { className: 'mb-6' }, [
+                React.createElement('h5', {
+                    className: 'text-center font-playfair text-gray-700 mb-2'
+                }, title),
+                React.createElement('table', {
+                    className: 'nutritional-table',
+                }, [
+                    React.createElement('tbody', {}, [
+                        React.createElement('tr', { key: 'row-1' }, [
+                            React.createElement('td', {}, 'Valoare energetică Kcal/kj'),
+                            React.createElement('td', { colSpan: '3' }, values?.calories || '-')
+                        ]),
+                        React.createElement('tr', { key: 'row-2' }, [
+                            React.createElement('td', {}, 'Grăsimi/din care lipide saturate'),
+                            React.createElement('td', { colSpan: '3' }, values?.fats || '-')
+                        ]),
+                        React.createElement('tr', { key: 'row-3' }, [
+                            React.createElement('td', {}, 'Proteine'),
+                            React.createElement('td', { colSpan: '3' }, values?.protein || '-')
+                        ]),
+                        React.createElement('tr', { key: 'row-4' }, [
+                            React.createElement('td', {}, 'Glucide'),
+                            React.createElement('td', { colSpan: '3' }, values?.carbs || '-')
+                        ]),
+                        React.createElement('tr', { key: 'row-5' }, [
+                            React.createElement('td', {}, 'Sare'),
+                            React.createElement('td', { colSpan: '3' }, values?.salt || '-')
+                        ]),
+                        !per100g && React.createElement('tr', { key: 'row-6' }, [
+                            React.createElement('td', {}, 'Alergeni'),
+                            React.createElement('td', { colSpan: '3', className: 'text-red-600' }, item.allergens || '-')
+                        ]),
+                        !per100g && React.createElement('tr', { key: 'row-7' }, [
+                            React.createElement('td', {}, 'Aditivi'),
+                            React.createElement('td', { colSpan: '3', className: 'text-orange-600' }, item.additives || '-')
+                        ])
+                    ].filter(Boolean))
+                ])
+            ]);
+        };
+
+        // Updated MenuItem component
         const MenuItem = ({ item }) => {
             const [isExpanded, setIsExpanded] = React.useState(false);
             const [isContentVisible, setIsContentVisible] = React.useState(false);
@@ -133,41 +236,16 @@
                         className: 'portion-info',
                         key: 'portion-details'
                     }, item.ingredients),
-                    React.createElement('table', {
-                        className: 'nutritional-table',
-                        key: 'nutritional-table'
-                    }, [
-                        React.createElement('tbody', {}, [
-                            React.createElement('tr', { key: 'row-1' }, [
-                                React.createElement('td', {}, 'Valoare energetică Kcal/kj'),
-                                React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.calories || '-')
-                            ]),
-                            React.createElement('tr', { key: 'row-2' }, [
-                                React.createElement('td', {}, 'Grăsimi/din care lipide saturate'),
-                                React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.fats || '-')
-                            ]),
-                            React.createElement('tr', { key: 'row-3' }, [
-                                React.createElement('td', {}, 'Proteine'),
-                                React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.protein || '-')
-                            ]),
-                            React.createElement('tr', { key: 'row-4' }, [
-                                React.createElement('td', {}, 'Glucide'),
-                                React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.carbs || '-')
-                            ]),
-                            React.createElement('tr', { key: 'row-5' }, [
-                                React.createElement('td', {}, 'Sare'),
-                                React.createElement('td', { colSpan: '3' }, item.nutritionalInfo?.salt || '-')
-                            ]),
-                            React.createElement('tr', { key: 'row-6' }, [
-                                React.createElement('td', {}, 'Alergeni'),
-                                React.createElement('td', { colSpan: '3', className: 'text-red-600' }, item.allergens || '-')
-                            ]),
-                            React.createElement('tr', { key: 'row-7' }, [
-                                React.createElement('td', {}, 'Aditivi'),
-                                React.createElement('td', { colSpan: '3', className: 'text-orange-600' }, item.additives || '-')
-                            ])
-                        ])
-                    ])
+                    React.createElement(NutritionalTable, { 
+                        key: 'main-table',
+                        item: item,
+                        per100g: false
+                    }),
+                    React.createElement(NutritionalTable, { 
+                        key: 'per100g-table',
+                        item: item,
+                        per100g: true
+                    })
                 ]))
             ]);
         };
