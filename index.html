@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div id="app" class="container mx-auto px-4 py-8 max-w-4xl">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Our Menu</h1>
+            <p class="text-gray-600">Fresh and delicious dishes prepared daily</p>
+        </header>
+
+        <div id="menu-container" class="space-y-4">
+            <!-- Menu items will be inserted here -->
+        </div>
+    </div>
+
+    <template id="menu-item-template">
+        <div class="bg-white rounded-lg shadow p-6 transition-all duration-300 hover:shadow-lg">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900"></h3>
+                    <p class="text-sm text-gray-600 mt-1"></p>
+                </div>
+                <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm">
+                    More Details
+                </button>
+            </div>
+            <div class="details hidden mt-6 pt-4 border-t border-gray-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Ingredients</h4>
+                        <p class="text-sm text-gray-600"></p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Nutritional Information</h4>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                        </ul>
+                    </div>
+                </div>
+                <div class="warnings mt-4 space-y-2">
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        async function loadMenu() {
+            try {
+                const response = await fetch('/data/menu.json');
+                const data = await response.json();
+                displayMenu(data.menuItems);
+            } catch (error) {
+                console.error('Error loading menu:', error);
+                document.getElementById('menu-container').innerHTML = 
+                    '<p class="text-red-500 text-center">Sorry, there was an error loading the menu. Please try again later.</p>';
+            }
+        }
+
+        function displayMenu(menuItems) {
+            const container = document.getElementById('menu-container');
+            const template = document.getElementById('menu-item-template');
+
+            menuItems.forEach(item => {
+                const menuItem = template.content.cloneNode(true);
+                const itemDiv = menuItem.querySelector('div');
+                
+                // Set basic information
+                itemDiv.querySelector('h3').textContent = item.name;
+                itemDiv.querySelector('h3 + p').textContent = `Portion: ${item.portion}`;
+
+                // Set ingredients
+                itemDiv.querySelector('.details p').textContent = item.ingredients;
+
+                // Set nutritional information
+                const nutritionList = itemDiv.querySelector('.details ul');
+                const nutrition = item.nutritionalInfo;
+                for (const [key, value] of Object.entries(nutrition)) {
+                    if (value !== null) {
+                        const li = document.createElement('li');
+                        li.textContent = `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`;
+                        nutritionList.appendChild(li);
+                    }
+                }
+
+                // Set warnings (allergens and additives)
+                const warningsDiv = itemDiv.querySelector('.warnings');
+                if (item.allergens) {
+                    const allergens = document.createElement('p');
+                    allergens.className = 'text-sm text-red-600';
+                    allergens.innerHTML = '<span class="font-semibold">Allergens:</span> ' + item.allergens;
+                    warningsDiv.appendChild(allergens);
+                }
+                if (item.additives) {
+                    const additives = document.createElement('p');
+                    additives.className = 'text-sm text-orange-600';
+                    additives.innerHTML = '<span class="font-semibold">Additives:</span> ' + item.additives;
+                    warningsDiv.appendChild(additives);
+                }
+
+                // Add toggle functionality
+                const toggleButton = itemDiv.querySelector('button');
+                const details = itemDiv.querySelector('.details');
+                toggleButton.addEventListener('click', () => {
+                    const isHidden = details.classList.contains('hidden');
+                    details.classList.toggle('hidden');
+                    toggleButton.textContent = isHidden ? 'Less Details' : 'More Details';
+                });
+
+                container.appendChild(menuItem);
+            });
+        }
+
+        // Load menu when page loads
+        document.addEventListener('DOMContentLoaded', loadMenu);
+    </script>
+</body>
+</html>
