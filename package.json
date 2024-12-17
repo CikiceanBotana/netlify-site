@@ -2,10 +2,11 @@
   "name": "restaurant-menu",
   "version": "1.0.0",
   "scripts": {
-    "build": "node build.js"
+    "build": "mkdirp public && node build.js && cp index.html public/ && cp -r admin public/"
   },
   "dependencies": {
     "front-matter": "^4.0.2",
-    "glob": "^8.1.0"
+    "glob": "^8.1.0",
+    "mkdirp": "^3.0.1"
   }
 }
