@@ -16,13 +16,24 @@ glob('content/menu/*.md', (err, files) => {
         return;
     }
 
+    console.log('Found files:', files); // Debug log
+
+    // Create empty array if no files exist
+    if (!files || files.length === 0) {
+        fs.writeFileSync(path.join(publicDir, 'menu-items.json'), JSON.stringify([], null, 2));
+        console.log('Created empty menu-items.json');
+        return;
+    }
+
     // Parse each file and extract the front matter
     const menuItems = files.map(file => {
         const content = fs.readFileSync(file, 'utf8');
         const data = frontMatter(content);
+        console.log(`Processed file ${file}:`, data.attributes); // Debug log
         return data.attributes;
     });
 
     // Write the combined data to a JSON file
     fs.writeFileSync(path.join(publicDir, 'menu-items.json'), JSON.stringify(menuItems, null, 2));
+    console.log('Successfully wrote menu-items.json');
 });
