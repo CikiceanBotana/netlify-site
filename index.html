@@ -7,13 +7,15 @@
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
     <div id="root"></div>
     <script type="module">
         const MenuItem = ({ item }) => {
             const [isExpanded, setIsExpanded] = React.useState(false);
+
+            if (!item) return null;
 
             return (
                 <div className="bg-white rounded-lg shadow-md p-4 mb-4 transition-all duration-300 hover:shadow-lg">
@@ -77,6 +79,7 @@
                 console.log('Fetching menu data...'); // Debug log
                 fetch('/menu-items.json')
                     .then(response => {
+                        console.log('Response status:', response.status);
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
@@ -84,7 +87,7 @@
                     })
                     .then(data => {
                         console.log('Menu data received:', data); // Debug log
-                        setMenuData(data);
+                        setMenuData(Array.isArray(data) ? data : []);
                         setLoading(false);
                     })
                     .catch(error => {
@@ -110,25 +113,17 @@
                 );
             }
 
-            if (!menuData || menuData.length === 0) {
-                return (
-                    <div className="min-h-screen bg-gray-100">
-                        <div className="container mx-auto px-4 py-8">
-                            <header className="text-center mb-12">
-                                <h1 className="text-4xl font-bold text-gray-900 mb-4">Meniul Nostru</h1>
-                                <p className="text-gray-600">Nu există încă preparate în meniu.</p>
-                            </header>
-                        </div>
-                    </div>
-                );
-            }
-
             return (
                 <div className="min-h-screen bg-gray-100">
                     <div className="container mx-auto px-4 py-8">
                         <header className="text-center mb-12">
                             <h1 className="text-4xl font-bold text-gray-900 mb-4">Meniul Nostru</h1>
-                            <p className="text-gray-600">Apăsați pe "Mai multe detalii" pentru a vedea informațiile nutriționale și ingredientele</p>
+                            <p className="text-gray-600">
+                                {menuData.length === 0 
+                                    ? 'Nu există încă preparate în meniu.'
+                                    : 'Apăsați pe "Mai multe detalii" pentru a vedea informațiile nutriționale și ingredientele'
+                                }
+                            </p>
                         </header>
                         <div className="max-w-3xl mx-auto">
                             {menuData.map((item, index) => (
@@ -140,8 +135,12 @@
             );
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<MenuList />);
+        try {
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(<MenuList />);
+        } catch (error) {
+            console.error('Error rendering app:', error);
+        }
 
         if (window.netlifyIdentity) {
             window.netlifyIdentity.on("init", user => {
