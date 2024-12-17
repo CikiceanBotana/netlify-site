@@ -1,6 +1,13 @@
 const fs = require('fs');
 const glob = require('glob');
 const frontMatter = require('front-matter');
+const path = require('path');
+
+// Create public directory if it doesn't exist
+const publicDir = path.join(__dirname, 'public');
+if (!fs.existsSync(publicDir)) {
+    fs.mkdirSync(publicDir, { recursive: true });
+}
 
 // Read all markdown files in content/menu
 glob('content/menu/*.md', (err, files) => {
@@ -17,5 +24,5 @@ glob('content/menu/*.md', (err, files) => {
     });
 
     // Write the combined data to a JSON file
-    fs.writeFileSync('public/menu-items.json', JSON.stringify(menuItems, null, 2));
+    fs.writeFileSync(path.join(publicDir, 'menu-items.json'), JSON.stringify(menuItems, null, 2));
 });
