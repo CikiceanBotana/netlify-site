@@ -1,7 +1,8 @@
 backend:
-  name: github
-  repo: CikiceanBotana/netlify-site
+  name: git-gateway
   branch: main
+
+local_backend: true # Enable local backend for development
 
 media_folder: "images/uploads"
 public_folder: "/images/uploads"
