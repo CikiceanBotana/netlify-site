@@ -2,7 +2,7 @@
   "name": "restaurant-menu",
   "version": "1.0.0",
   "scripts": {
-    "build": "mkdirp public && node build.js && cp index.html public/ && cp -r admin public/"
+    "build": "mkdirp public && node build.js && cp index.html public/ && cp -r admin public/ && [ -d content ] && cp -r content public/ || echo 'No content directory'"
   },
   "dependencies": {
     "front-matter": "^4.0.2",
