@@ -1,0 +1,29 @@
+backend:
+  name: github
+  repo: your-github-username/your-repo-name
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "menu"
+    label: "Menu Items"
+    folder: "content/menu"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Nume Preparat", name: "name", widget: "string"}
+      - {label: "Porție", name: "portion", widget: "string"}
+      - {label: "Ingrediente", name: "ingredients", widget: "text"}
+      - label: "Informații Nutriționale"
+        name: "nutritionalInfo"
+        widget: "object"
+        fields:
+          - {label: "Calorii", name: "calories", widget: "string"}
+          - {label: "Grăsimi", name: "fats", widget: "string"}
+          - {label: "Proteine", name: "protein", widget: "string"}
+          - {label: "Carbohidrați", name: "carbs", widget: "string"}
+          - {label: "Sare", name: "salt", widget: "string"}
+      - {label: "Alergeni", name: "allergens", widget: "string", required: false}
+      - {label: "Aditivi", name: "additives", widget: "string", required: false}
