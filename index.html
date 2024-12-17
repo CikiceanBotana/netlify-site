@@ -24,11 +24,35 @@
         }
         .menu-card {
             background-color: #FFFFFF;
-            box-shadow: 0 4px 6px rgba(197, 165, 114, 0.1);
-            border: 1px solid rgba(197, 165, 114, 0.2);
+            box-shadow: 0 2px 4px rgba(197, 165, 114, 0.1);
+            border-bottom: 1px solid rgba(197, 165, 114, 0.2);
+        }
+        .menu-card:first-child {
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+        .menu-card:last-child {
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            border-bottom: none;
         }
         .menu-details {
             background-color: #FDFAF5;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .menu-details.expanded {
+            max-height: 500px;
+        }
+        .details-content {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease-in-out;
+        }
+        .details-content.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -37,15 +61,25 @@
     <script>
         const MenuItem = ({ item }) => {
             const [isExpanded, setIsExpanded] = React.useState(false);
+            const [isContentVisible, setIsContentVisible] = React.useState(false);
+
+            React.useEffect(() => {
+                if (isExpanded) {
+                    // Delay showing content until dropdown animation starts
+                    setTimeout(() => setIsContentVisible(true), 50);
+                } else {
+                    setIsContentVisible(false);
+                }
+            }, [isExpanded]);
 
             if (!item) return null;
 
             return React.createElement('div', { 
-                className: "menu-card rounded-lg p-4 mb-6 transition-all duration-300 hover:shadow-lg" 
+                className: "menu-card" 
             }, [
                 React.createElement('div', { 
                     key: 'header',
-                    className: "flex justify-between items-center" 
+                    className: "flex justify-between items-center p-4" 
                 }, [
                     React.createElement('div', { key: 'title' }, [
                         React.createElement('h3', { 
@@ -63,9 +97,11 @@
                         className: "px-6 py-2 bg-gold text-white rounded-full hover:bg-gold-dark transition-colors font-lato"
                     }, isExpanded ? 'Mai puține detalii' : 'Mai multe detalii')
                 ]),
-                isExpanded && React.createElement('div', {
+                React.createElement('div', {
                     key: 'details',
-                    className: "menu-details mt-6 p-6 rounded-lg"
+                    className: `menu-details ${isExpanded ? 'expanded' : ''}`
+                }, React.createElement('div', {
+                    className: `details-content ${isContentVisible ? 'visible' : ''} p-6`
                 }, [
                     React.createElement('div', {
                         key: 'grid',
@@ -117,10 +153,11 @@
                             item.additives
                         ])
                     ])
-                ])
+                ]))
             ]);
         };
 
+        // Rest of the code remains the same (Logo and MenuList components)
         const Logo = () => {
             return React.createElement('div', {
                 className: "text-center mb-8"
@@ -197,7 +234,7 @@
                 ]),
                 React.createElement('div', {
                     key: 'menu-items',
-                    className: "space-y-6"
+                    className: "shadow-lg rounded-lg overflow-hidden"
                 }, menuData.map((item, index) => 
                     React.createElement(MenuItem, { key: index, item: item })
                 ))
