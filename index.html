@@ -45,13 +45,11 @@
         .menu-details.expanded {
             max-height: 800px;
         }
-
         .nutritional-table + .nutritional-table {
             margin-top: 2rem;
             border-top: 2px solid rgba(197, 165, 114, 0.2);
             padding-top: 1rem;
-        } 
-
+        }
         .details-content {
             opacity: 0;
             transform: translateY(-10px);
@@ -88,6 +86,15 @@
             margin-bottom: 1rem;
             font-style: italic;
         }
+        .category-tabs {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-skin font-lato">
@@ -103,7 +110,6 @@
         const calculatePer100g = (value, portionSize) => {
             if (!value || !portionSize) return '-';
             
-            // Handle energy values (e.g., "254/1062")
             if (value.includes('/')) {
                 const [kcal, kj] = value.split('/').map(v => extractNumber(v));
                 const kcalPer100 = Math.round((kcal * 100) / portionSize);
@@ -111,7 +117,6 @@
                 return `${kcalPer100}/${kjPer100}`;
             }
             
-            // Handle values with slashes (e.g., "14/6")
             if (value.includes('/')) {
                 const [val1, val2] = value.split('/').map(v => extractNumber(v));
                 const val1Per100 = Math.round((val1 * 100) / portionSize);
@@ -119,7 +124,6 @@
                 return `${val1Per100}/${val2Per100}`;
             }
 
-            // Handle simple numeric values
             const numValue = extractNumber(value);
             if (numValue === 0) return '-';
             
@@ -188,7 +192,39 @@
             ]);
         };
 
-        // Updated MenuItem component
+        // Category Tabs component
+        const CategoryTabs = ({ categories, activeCategory, onCategoryChange }) => {
+            return React.createElement('div', {
+                className: 'category-tabs flex justify-center mb-8'
+            }, 
+                React.createElement('div', {
+                    className: 'inline-flex rounded-lg border border-gold p-1'
+                }, [
+                    React.createElement('button', {
+                        key: 'all',
+                        onClick: () => onCategoryChange(null),
+                        className: `px-4 py-2 rounded-md transition-colors ${
+                            activeCategory === null
+                                ? 'bg-gold text-white'
+                                : 'text-gold hover:bg-gold hover:text-white'
+                        }`
+                    }, 'Toate'),
+                    ...categories.map(category =>
+                        React.createElement('button', {
+                            key: category,
+                            onClick: () => onCategoryChange(category),
+                            className: `px-4 py-2 rounded-md transition-colors ${
+                                activeCategory === category
+                                    ? 'bg-gold text-white'
+                                    : 'text-gold hover:bg-gold hover:text-white'
+                            }`
+                        }, category)
+                    )
+                ])
+            );
+        };
+
+        // MenuItem component
         const MenuItem = ({ item }) => {
             const [isExpanded, setIsExpanded] = React.useState(false);
             const [isContentVisible, setIsContentVisible] = React.useState(false);
@@ -250,6 +286,7 @@
             ]);
         };
 
+        // Logo component
         const Logo = () => {
             return React.createElement('div', {
                 className: "text-center mb-8"
@@ -267,10 +304,14 @@
             ]);
         };
 
+        // MenuList component
         const MenuList = () => {
             const [menuData, setMenuData] = React.useState([]);
             const [loading, setLoading] = React.useState(true);
             const [error, setError] = React.useState(null);
+            const [activeCategory, setActiveCategory] = React.useState(null);
+
+            const categories = ["Pește", "Carne", "Supe/Ciorbe", "Aperitive", "Salate"];
 
             React.useEffect(() => {
                 console.log('Fetching menu data...');
@@ -291,6 +332,10 @@
                         setLoading(false);
                     });
             }, []);
+
+            const filteredMenuItems = activeCategory
+                ? menuData.filter(item => item.category === activeCategory)
+                : menuData;
 
             if (loading) {
                 return React.createElement('div', {
@@ -316,23 +361,35 @@
                 React.createElement(Logo, { key: 'logo' }),
                 React.createElement('div', {
                     key: 'menu-description',
-                    className: "text-center mb-12"
-                }, [
-                    React.createElement('p', {
-                        className: "text-gray-600 font-lato"
-                    }, menuData.length === 0 
-                        ? "Nu există încă preparate în meniu."
-                        : "Bucătăria noastră vă oferă o experiență culinară deosebită")
-                ]),
+                    className: "text-center mb-8"
+                }, React.createElement('p', {
+                    className: "text-gray-600 font-lato"
+                }, "Bucătăria noastră vă oferă o experiență culinară deosebită")),
+                
+                React.createElement(CategoryTabs, {
+                    key: 'category-tabs',
+                    categories: categories,
+                    activeCategory: activeCategory,
+                    onCategoryChange: setActiveCategory
+                }),
+
                 React.createElement('div', {
                     key: 'menu-items',
                     className: "shadow-lg rounded-lg overflow-hidden"
-                }, menuData.map((item, index) => 
-                    React.createElement(MenuItem, { key: index, item: item })
-                ))
+                }, filteredMenuItems.length === 0 
+                    ? React.createElement('div', {
+                        className: "p-8 text-center text-gray-600"
+                    }, "Nu există preparate în această categorie.")
+                    : filteredMenuItems.map((item, index) => 
+                        React.createElement(MenuItem, { 
+                            key: index, 
+                            item: item 
+                        })
+                    ))
             ]));
         };
 
+        // Initialize the app
         try {
             const root = ReactDOM.createRoot(document.getElementById('root'));
             root.render(React.createElement(MenuList));
