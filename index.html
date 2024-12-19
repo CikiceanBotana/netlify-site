@@ -281,42 +281,51 @@
 
         // MenuItem component
         const MenuItem = ({ item }) => {
-            const [isExpanded, setIsExpanded] = React.useState(false);
-            const [isContentVisible, setIsContentVisible] = React.useState(false);
+    const [isExpanded, setIsExpanded] = React.useState(false);
+    const [isContentVisible, setIsContentVisible] = React.useState(false);
 
-            React.useEffect(() => {
-                if (isExpanded) {
-                    setTimeout(() => setIsContentVisible(true), 50);
-                } else {
-                    setIsContentVisible(false);
-                }
-            }, [isExpanded]);
+    React.useEffect(() => {
+        if (isExpanded) {
+            setTimeout(() => setIsContentVisible(true), 50);
+        } else {
+            setIsContentVisible(false);
+        }
+    }, [isExpanded]);
 
-            if (!item) return null;
+    if (!item) return null;
 
-            return React.createElement('div', { 
-                className: "menu-card" 
-            }, [
-                React.createElement('div', { 
-                    key: 'header',
-                    className: "flex justify-between items-center p-4" 
+    return React.createElement('div', { 
+        className: "menu-card" 
+    }, [
+        React.createElement('div', { 
+            key: 'header',
+            className: "flex justify-between items-center p-4" 
+        }, [
+            React.createElement('div', { key: 'title' }, [
+                React.createElement('h3', { 
+                    key: 'name',
+                    className: "text-xl font-playfair font-bold text-gray-800" 
+                }, item.name),
+                React.createElement('div', {
+                    key: 'details',
+                    className: "flex items-center gap-4 mt-1"
                 }, [
-                    React.createElement('div', { key: 'title' }, [
-                        React.createElement('h3', { 
-                            key: 'name',
-                            className: "text-xl font-playfair font-bold text-gray-800" 
-                        }, item.name),
-                        React.createElement('p', { 
-                            key: 'portion',
-                            className: "text-sm text-gold mt-1" 
-                        }, `Porție: ${item.portion}`)
-                    ]),
-                    React.createElement('button', {
-                        key: 'button',
-                        onClick: () => setIsExpanded(!isExpanded),
-                        className: "px-6 py-2 bg-gold text-white rounded-full hover:bg-gold-dark transition-colors font-lato"
-                    }, isExpanded ? 'Mai puține detalii' : 'Mai multe detalii')
-                ]),
+                    React.createElement('p', { 
+                        key: 'portion',
+                        className: "text-sm text-gold" 
+                    }, `Porție: ${item.portion}`),
+                    React.createElement('p', {
+                        key: 'price',
+                        className: "text-sm font-bold text-gold"
+                    }, `${item.price} RON`)
+                ])
+            ]),
+            React.createElement('button', {
+                key: 'button',
+                onClick: () => setIsExpanded(!isExpanded),
+                className: "px-6 py-2 bg-gold text-white rounded-full hover:bg-gold-dark transition-colors font-lato"
+            }, isExpanded ? 'Mai puține detalii' : 'Mai multe detalii')
+        ]),
                 React.createElement('div', {
                     key: 'details',
                     className: `menu-details ${isExpanded ? 'expanded' : ''}`
@@ -366,7 +375,21 @@
             const [error, setError] = React.useState(null);
             const [activeCategory, setActiveCategory] = React.useState(null);
 
-            const categories = ["Pește", "Carne", "Supe/Ciorbe", "Aperitive", "Salate"];
+            const categories = [
+    "Pește",
+    "Carne", 
+    "Supe/Ciorbe",
+    "Aperitive",
+    "Salate",
+    "Vinuri",
+    "Băuturi",
+    "Băuturi Alcoolice",
+    "Garnituri",
+    "Fructe de Mare",
+    "Bere",
+    "Cidru",
+    "Deserturi"
+];
 
             React.useEffect(() => {
                 console.log('Fetching menu data...');
