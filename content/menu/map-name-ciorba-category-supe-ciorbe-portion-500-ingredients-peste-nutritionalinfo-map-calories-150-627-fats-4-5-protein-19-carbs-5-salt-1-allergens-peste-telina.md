@@ -2,6 +2,7 @@
 name: CIORBA
 category: Supe/Ciorbe
 portion: "500"
+price: 25
 ingredients: PESTE
 nutritionalInfo:
   calories: 150/627
