@@ -1,0 +1,15 @@
+---
+name: "SALATA ICRE CRAP"
+category: "Salate"
+portion: "100GR"
+price: 18
+ingredients: "icre crap-25gr, ulei-60gr, zeama de lamaie, ceapa, apa, sare"
+nutritionalInfo:
+  calories: "565/2361"
+  fats: "61gr/30gr"
+  protein: "6"
+  carbs: "0"
+  salt: "1gr"
+allergens: "peste"
+additives: ""
+---
