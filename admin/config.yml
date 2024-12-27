@@ -29,6 +29,7 @@ collections:
           "Bere",
           "Cidru",
           "Deserturi"
+          "Saramura"
         ]}
       - {label: "Porție", name: "portion", widget: "string"}
       - {label: "Preț", name: "price", widget: "number"}
