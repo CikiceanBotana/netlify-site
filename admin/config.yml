@@ -28,7 +28,7 @@ collections:
           "Fructe de Mare",
           "Bere",
           "Cidru",
-          "Deserturi"
+          "Deserturi",
           "Saramura"
         ]}
       - {label: "Porție", name: "portion", widget: "string"}
