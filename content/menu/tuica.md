@@ -2,7 +2,7 @@
 name: "ȚUICĂ/PĂLINCĂ"
 category: "Băuturi Alcoolice"
 portion: "50ML"
-price: 13
+price: 15
 ingredients: "Țuică/pălincă de prune"
 nutritionalInfo:
   calories: "116/485"
