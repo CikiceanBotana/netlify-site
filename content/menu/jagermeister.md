@@ -2,7 +2,7 @@
 name: "JÄGERMEISTER"
 category: "Băuturi Alcoolice"
 portion: "50ML"
-price: 15
+price: 20
 ingredients: "Lichior din plante"
 nutritionalInfo:
   calories: "135/564"
